@@ -1,10 +1,12 @@
 FROM ubuntu:18.04
 LABEL maintainer="Nevin Morgan <nevins.morgan@gmail.com>"
 
-ENV PHP_VERSION 7.3
+ARG PHP_VERSION=7.3
+ENV PHP_VERSION ${PHP_VERSION}
 
 RUN LC_ALL=C.UTF-8 apt-get update && apt-get install -y software-properties-common curl inetutils-syslogd && \
     apt-add-repository ppa:ondrej/php -y && apt-get update && apt-get install -y \
+    php${PHP_VERSION}-xdebug \
     php${PHP_VERSION}-bcmath \
     php${PHP_VERSION}-ctype \
     php${PHP_VERSION}-curl \
@@ -39,4 +41,4 @@ RUN LC_ALL=C.UTF-8 apt-get update && apt-get install -y software-properties-comm
     sed -i 's#.*clear_env.*#clear_env=no#g' /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
 
 EXPOSE 9000
-ENTRYPOINT [ "/usr/sbin/php-fpm7.3", "-R", "--nodaemonize" ]
+ENTRYPOINT ["sh", "-c", "/usr/sbin/php-fpm${PHP_VERSION} -R --nodaemonize" ]
